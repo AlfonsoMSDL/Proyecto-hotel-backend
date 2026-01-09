@@ -1,0 +1,30 @@
+version: "1.0"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./uploads/habitaciones:/app/uploads/habitaciones
+    expose:
+      - "8181"
+    ports:
+      - "8181:8181"
+    depends_on:
+      - bd
+  bd:
+    image: postgres:14.19-alpine3.21
+    env_file:
+      - .env
+    volumes:
+      - ./creacion_de_tablas.sql:/docker-entrypoint-initdb.d/creacion_de_tablas.sql
+      - datos:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "55432:5432"
+volumes:
+  datos:
