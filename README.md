@@ -99,7 +99,7 @@ Estos modelos sirven como base para el desarrollo del sistema y ayudan a mantene
 ## 📑 Documentación de la API
 Una vez el proyecto esté en ejecución, la documentación de los endpoints está disponible en:
 
-`http://localhost:8181/hotel/api/swagger-ui.html`
+`http://localhost:8181/hotel/api/swagger-ui/index.html`
 
 ---
 ## 📌 Estado del proyecto
