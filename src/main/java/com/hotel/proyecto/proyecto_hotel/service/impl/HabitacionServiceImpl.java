@@ -119,8 +119,6 @@ public class HabitacionServiceImpl implements HabitacionService {
         return habitacionMapper.toGetHabitacionList(habitaciones);
     }
 
-    //Este metodo filtra las habitaciones por su precio, ej:
-    //Habitaciones con precio entre 15000 y 20000
     @Override
     public List<GetHabitacion> filtrarPorRangoDePrecio(Double precioMinimo, Double precioMaximo) {
 

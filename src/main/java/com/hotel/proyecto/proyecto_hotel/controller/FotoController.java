@@ -4,9 +4,11 @@ import com.hotel.proyecto.proyecto_hotel.dto.response.GetFoto;
 import com.hotel.proyecto.proyecto_hotel.service.FotoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,18 +22,6 @@ public class FotoController {
         List<GetFoto> fotos =  fotoService.findByIdHabitacion(idHabitacion);
         return ResponseEntity.ok(fotos);
 
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFoto(@PathVariable Long id){
-
-        try {
-            fotoService.eliminarFotoDeHabitacion(id);
-            return ResponseEntity.ok().build();
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
-
-        }
     }
 
 }
