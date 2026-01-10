@@ -117,4 +117,14 @@ public class ManejadorImagenService {
             throw new RuntimeException(e);
         }
     }
+
+    public void borrarImagenDeHabitacion(Foto fotoEliminar) throws IOException {
+        //Creo una ruta a partir de la ruta y el nombre de la foto traida de la bd
+        Path rutaImagen = Paths.get(fotoEliminar.getRuta()+"/"+fotoEliminar.getNombre());
+
+        //Elimino la foto
+        Files.delete(rutaImagen);
+        log.info("Imagen borrada de la carpeta "+rutaImagen);
+
+    }
 }
