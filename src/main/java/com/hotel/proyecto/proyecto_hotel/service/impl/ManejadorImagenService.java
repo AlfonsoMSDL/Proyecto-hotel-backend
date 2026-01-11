@@ -1,6 +1,7 @@
 package com.hotel.proyecto.proyecto_hotel.service.impl;
 
 import com.hotel.proyecto.proyecto_hotel.exception.ListaImagenesVaciaException;
+import com.hotel.proyecto.proyecto_hotel.exception.HabitacionNoEncontradaException;
 import com.hotel.proyecto.proyecto_hotel.exception.TipoImagenIncorrectoException;
 import com.hotel.proyecto.proyecto_hotel.model.Foto;
 import com.hotel.proyecto.proyecto_hotel.model.Habitacion;
@@ -88,6 +89,33 @@ public class ManejadorImagenService {
 
         }
         return datosFotos;
+
+    }
+
+    public Foto guardarImagenEnCarpeta(MultipartFile imagen, Habitacion habitacion) throws TipoImagenIncorrectoException{
+        //Creo la ruta en donde se va a guardar la imagen, esta ruta es en la carpeta de la habitacion
+        Path rutaHabitacion = Paths.get(UPLOAD_DIR + habitacion.getId());
+
+
+        if(imagen == null || !imagen.getContentType().startsWith("image/")){
+            log.info("El archivo no es una imagen o no fue enviada");
+            throw new TipoImagenIncorrectoException("El archivo no es una imagen o no fue enviada");
+        }
+
+        //Creo un nuevo nombre para la foto
+        String nuevoNombre = UUID.randomUUID() + "." + FilenameUtils.getExtension(imagen.getOriginalFilename());
+
+        //Pego la ruta de la habitacion con el nombre para obtener la ruta completa
+        Path rutaFinal = rutaHabitacion.resolve(nuevoNombre);
+        try {
+            //Transfiero la imagen a la ruta para que se guarde en la carpeta
+            imagen.transferTo(rutaFinal);
+            log.info("La foto se ha guardado correctamente en la carpeta "+rutaHabitacion);
+            return new Foto(nuevoNombre,rutaHabitacion.toString(),habitacion);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 

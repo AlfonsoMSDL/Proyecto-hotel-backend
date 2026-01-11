@@ -1,10 +1,13 @@
 package com.hotel.proyecto.proyecto_hotel.service.impl;
 
 import com.hotel.proyecto.proyecto_hotel.dto.request.HabitacionSave;
+import com.hotel.proyecto.proyecto_hotel.dto.response.GetFoto;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetHabitacion;
 import com.hotel.proyecto.proyecto_hotel.exception.ListaImagenesVaciaException;
 import com.hotel.proyecto.proyecto_hotel.exception.NumeroHabitacionRepetidaException;
+import com.hotel.proyecto.proyecto_hotel.exception.HabitacionNoEncontradaException;
 import com.hotel.proyecto.proyecto_hotel.exception.TipoImagenIncorrectoException;
+import com.hotel.proyecto.proyecto_hotel.mapper.FotoMapper;
 import com.hotel.proyecto.proyecto_hotel.mapper.HabitacionMapper;
 import com.hotel.proyecto.proyecto_hotel.model.Foto;
 import com.hotel.proyecto.proyecto_hotel.model.Habitacion;
@@ -29,6 +32,7 @@ public class HabitacionServiceImpl implements HabitacionService {
     private final HabitacionMapper habitacionMapper;
     private final HabitacionRepository habitacionRepository;
     private final ManejadorImagenService manejadorImagen;
+    private final FotoMapper fotoMapper;
     private final FotoRepository fotoRepository;
 
     @Override
@@ -96,7 +100,7 @@ public class HabitacionServiceImpl implements HabitacionService {
         //asociadas a esa habitacion en la bd
 
         habitacionRepository.delete(habitacion);
-        log.info("Habitacion con id "+habitacion.getId()+" eliminada.");
+        log.info("Habitacion con id {} eliminada.", habitacion.getId());
 
     }
 
@@ -127,6 +131,31 @@ public class HabitacionServiceImpl implements HabitacionService {
         List<Habitacion> habitaciones = habitacionRepository.findByPrecioNocheBetween(precioMinimo,precioMaximo);
 
         return habitacionMapper.toGetHabitacionList(habitaciones);
+    }
+
+    @Override
+    @Transactional
+    public GetFoto agregarFotoAHabitacion(Long idHabitacion, MultipartFile imagen) throws HabitacionNoEncontradaException,TipoImagenIncorrectoException {
+        //Busco la habitacion a la que le voy a agregar la foto
+        Habitacion  habitacion = habitacionRepository.findById(idHabitacion).orElse(null);
+
+        if (habitacion == null) {
+            log.info("Habitacion no encontrada.");
+            throw new HabitacionNoEncontradaException("Habitacion no encontrada");
+        }
+
+
+        //Luego llamo al metodo que guarda la imagen en la carpeta de la habitacion
+        Foto fotoGuardar = manejadorImagen.guardarImagenEnCarpeta(imagen,habitacion);
+
+        //Guardo la foto en la bd, esta ya tiene agregada como atributo la habitacion dueña de la foto
+        //Por lo tanto spring data se va a encargar de enlazar en a bd la foto con la habitacion son su llave foranea
+        Foto fotoGuardada = fotoRepository.save(fotoGuardar);
+        log.info("La foto se ha guardado correctamente en la bd");
+
+
+        //Mapeo la imagen a un dto
+        return fotoMapper.toGetFoto(fotoGuardada);
     }
 
 

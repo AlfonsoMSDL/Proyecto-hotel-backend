@@ -1,6 +1,7 @@
 package com.hotel.proyecto.proyecto_hotel.service;
 
 import com.hotel.proyecto.proyecto_hotel.dto.request.HabitacionSave;
+import com.hotel.proyecto.proyecto_hotel.dto.response.GetFoto;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetHabitacion;
 import com.hotel.proyecto.proyecto_hotel.model.Habitacion;
 import com.hotel.proyecto.proyecto_hotel.model.enums.TipoHabitacion;
@@ -16,4 +17,5 @@ public interface HabitacionService {
     List<GetHabitacion> findAll();
     List<GetHabitacion> filtrarPorTipoHabitacion(TipoHabitacion tipo);
     List<GetHabitacion> filtrarPorRangoDePrecio(Double precioMinimo, Double precioMaximo);
+    GetFoto agregarFotoAHabitacion(Long idHabitacion, MultipartFile imagen);
 }

@@ -28,7 +28,7 @@ public class FotoServiceImpl implements FotoService {
     }
 
 
-    //Este metodo va a borrar una foto de una habitacion
+    //Este metodo va a borrar una foto de una habitacion existente
     @Override
     public void eliminarFotoDeHabitacion(Long idFoto) throws IOException {
         //Primero busco la foto que se va a eliminar

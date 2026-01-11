@@ -1,11 +1,12 @@
 package com.hotel.proyecto.proyecto_hotel.controller;
 
 import com.hotel.proyecto.proyecto_hotel.dto.request.HabitacionSave;
+import com.hotel.proyecto.proyecto_hotel.dto.response.GetFoto;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetHabitacion;
+import com.hotel.proyecto.proyecto_hotel.exception.HabitacionNoEncontradaException;
 import com.hotel.proyecto.proyecto_hotel.exception.ListaImagenesVaciaException;
 import com.hotel.proyecto.proyecto_hotel.exception.NumeroHabitacionRepetidaException;
 import com.hotel.proyecto.proyecto_hotel.exception.TipoImagenIncorrectoException;
-import com.hotel.proyecto.proyecto_hotel.model.Habitacion;
 import com.hotel.proyecto.proyecto_hotel.model.enums.TipoHabitacion;
 import com.hotel.proyecto.proyecto_hotel.service.HabitacionService;
 import lombok.AllArgsConstructor;
@@ -62,6 +63,20 @@ public class HabitacionController {
 
         List<GetHabitacion> habitaciones = habitacionService.filtrarPorRangoDePrecio(precioMinimo,precioMaximo);
         return ResponseEntity.ok(habitaciones);
+    }
+
+    @PostMapping("/{idHabitacion}/fotos")
+    public ResponseEntity<Object> agregarFotoAHabitacion(@RequestParam(required = false) MultipartFile imagen, @PathVariable Long idHabitacion) {
+        try{
+            GetFoto fotoGuardada = habitacionService.agregarFotoAHabitacion(idHabitacion,imagen);
+            return ResponseEntity.ok(fotoGuardada);
+        }catch (HabitacionNoEncontradaException | TipoImagenIncorrectoException e){
+            String error= "\"error\":\""+e.getMessage()+"\"";
+            return ResponseEntity.badRequest().body(error);
+        }
+
+
+
     }
 
 }
