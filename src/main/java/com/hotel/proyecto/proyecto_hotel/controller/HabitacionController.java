@@ -79,4 +79,11 @@ public class HabitacionController {
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<GetHabitacion> actualizarHabitacion(@RequestBody HabitacionSave habitacionSave,@PathVariable Long id){
+        GetHabitacion habitacionActualizada = habitacionService.updateHabitacion(habitacionSave,id);
+        return ResponseEntity.ok(habitacionActualizada);
+    }
+
+
 }

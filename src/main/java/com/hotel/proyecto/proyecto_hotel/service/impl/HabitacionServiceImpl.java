@@ -158,5 +158,43 @@ public class HabitacionServiceImpl implements HabitacionService {
         return fotoMapper.toGetFoto(fotoGuardada);
     }
 
+    @Transactional
+    @Override
+    public GetHabitacion updateHabitacion(HabitacionSave habitacionSave, Long idHabitacion) throws HabitacionNoEncontradaException, NumeroHabitacionRepetidaException {
+        //Primero busco la habitacion
+        Habitacion  habitacion = habitacionRepository.findById(idHabitacion).orElse(null);
+
+        if (habitacion == null) {
+            log.info("Habitacion no encontrada.");
+            throw new HabitacionNoEncontradaException("Habitacion no encontrada");
+        }
+        log.info("Datos actuales de la habitacion "+habitacion);
+        //Le asigno los nuevos datos a la habitacion
+        asignarDatosActualizados(habitacion,habitacionSave);
+
+        //Actualizo la habitacion con los nuevos datos
+        habitacion = habitacionRepository.save(habitacion);
+        log.info("La habitacion se ha actualizado correctamente");
+        log.info("Nuevos datos de la habitacion "+habitacion);
+
+
+        return habitacionMapper.toGetHabitacion(habitacion);
+    }
+
+    private void asignarDatosActualizados(Habitacion habitacion, HabitacionSave habitacionSave) throws NumeroHabitacionRepetidaException {
+        //Primero pregunto si el nuevo numero de la habitacion ya esta en uso por otra habitacion
+        if(habitacionRepository.existsByNumero(habitacionSave.numero())){
+            //Si ya existe lanzo una excepcion
+            log.info("Este numero de habitacion ya está en uso");
+            throw new NumeroHabitacionRepetidaException("Este numero de habitacion ya está en uso");
+        }
+        habitacion.setNumero(habitacionSave.numero());
+        habitacion.setPrecioNoche(habitacionSave.precioNoche());
+        habitacion.setTipoHabitacion(habitacionSave.tipoHabitacion());
+        habitacion.setCapacidad(habitacionSave.capacidad());
+        habitacion.setDescripcion(habitacionSave.descripcion());
+
+    }
+
 
 }

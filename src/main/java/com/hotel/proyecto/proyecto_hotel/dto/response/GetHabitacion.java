@@ -5,6 +5,7 @@ public record GetHabitacion(
     Integer numero,
     String tipoHabitacion,
     Double precioNoche,
-    Integer capacidad
+    Integer capacidad,
+    String descripcion
 ) {
 }

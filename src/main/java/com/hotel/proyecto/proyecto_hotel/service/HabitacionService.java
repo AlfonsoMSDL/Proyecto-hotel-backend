@@ -18,4 +18,5 @@ public interface HabitacionService {
     List<GetHabitacion> filtrarPorTipoHabitacion(TipoHabitacion tipo);
     List<GetHabitacion> filtrarPorRangoDePrecio(Double precioMinimo, Double precioMaximo);
     GetFoto agregarFotoAHabitacion(Long idHabitacion, MultipartFile imagen);
+    GetHabitacion updateHabitacion(HabitacionSave habitacionSave, Long idHabitacion);
 }
