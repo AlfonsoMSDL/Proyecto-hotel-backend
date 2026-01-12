@@ -31,7 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-.env
 
 ##No subir la carpeta de las imagenes (uploads)
 uploads
