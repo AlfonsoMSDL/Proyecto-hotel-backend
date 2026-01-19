@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -30,6 +31,7 @@ public class EstadoDeLaReserva implements Serializable {
     private EstadoReserva estadoReserva;
 
     @Column(name = "fecha_inicio")
+    @CreationTimestamp
     private Timestamp fechaInicio;
 
     @Column(name = "fecha_fin")

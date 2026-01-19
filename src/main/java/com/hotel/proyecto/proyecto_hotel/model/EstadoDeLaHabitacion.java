@@ -2,6 +2,7 @@ package com.hotel.proyecto.proyecto_hotel.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -27,6 +28,7 @@ public class EstadoDeLaHabitacion implements Serializable {
     private EstadoHabitacion estadoHabitacion;
 
     @Column(name = "fecha_inicio")
+    @CreationTimestamp
     private Date fechaInicio;
     @Column(name = "fecha_fin")
     private Date fechaFin;
