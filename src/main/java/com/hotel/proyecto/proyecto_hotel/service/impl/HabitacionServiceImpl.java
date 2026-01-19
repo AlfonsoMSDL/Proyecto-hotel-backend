@@ -9,11 +9,15 @@ import com.hotel.proyecto.proyecto_hotel.exception.HabitacionNoEncontradaExcepti
 import com.hotel.proyecto.proyecto_hotel.exception.TipoImagenIncorrectoException;
 import com.hotel.proyecto.proyecto_hotel.mapper.FotoMapper;
 import com.hotel.proyecto.proyecto_hotel.mapper.HabitacionMapper;
+import com.hotel.proyecto.proyecto_hotel.model.EstadoDeLaHabitacion;
+import com.hotel.proyecto.proyecto_hotel.model.EstadoHabitacion;
 import com.hotel.proyecto.proyecto_hotel.model.Foto;
 import com.hotel.proyecto.proyecto_hotel.model.Habitacion;
 import com.hotel.proyecto.proyecto_hotel.model.enums.TipoHabitacion;
 import com.hotel.proyecto.proyecto_hotel.repository.FotoRepository;
 import com.hotel.proyecto.proyecto_hotel.repository.HabitacionRepository;
+import com.hotel.proyecto.proyecto_hotel.service.EstadoDeLaHabitacionService;
+import com.hotel.proyecto.proyecto_hotel.service.EstadoHabitacionService;
 import com.hotel.proyecto.proyecto_hotel.service.HabitacionService;
 
 import lombok.AllArgsConstructor;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +39,8 @@ public class HabitacionServiceImpl implements HabitacionService {
     private final ManejadorImagenService manejadorImagen;
     private final FotoMapper fotoMapper;
     private final FotoRepository fotoRepository;
+    private final EstadoHabitacionService estadoHabitacionService;
+    private final EstadoDeLaHabitacionService estadoDeLaHabitacionService;
 
     @Override
     @Transactional
@@ -70,6 +77,18 @@ public class HabitacionServiceImpl implements HabitacionService {
             //con las fotos
             habitacionRepository.save(habitacionGuardada);
             log.info("Se actualizo la habitacion con las imagenes.");
+
+            //Ahora que la habitacion se guardo, debo asignar un estado de habitacion "Disponible"
+            //Traigo el estado de habitacion Disponible
+            EstadoHabitacion estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
+
+            //Luego relaciono ese estado con la habitacion
+            EstadoDeLaHabitacion estadoDeLaHabitacion = new EstadoDeLaHabitacion();
+            estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
+            estadoDeLaHabitacion.setHabitacion(habitacionGuardada);
+
+            estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
+            log.info("Se le asigno a la habitacion un estado de Disponible.");
 
 
         } catch (IOException e) {
@@ -131,6 +150,11 @@ public class HabitacionServiceImpl implements HabitacionService {
         List<Habitacion> habitaciones = habitacionRepository.findByPrecioNocheBetween(precioMinimo,precioMaximo);
 
         return habitacionMapper.toGetHabitacionList(habitaciones);
+    }
+
+    @Override
+    public List<GetHabitacion> filtrarPorDisponibilidadDeFechas(Timestamp fechaLlegada, Timestamp fechaSalida) {
+        return List.of();
     }
 
     @Override
