@@ -21,4 +21,9 @@ public class EstadoHabitacionServiceImpl implements EstadoHabitacionService {
     public EstadoHabitacion findById(Long id) {
         return estadoHabitacionRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public EstadoHabitacion findByNombre(String nombre) {
+        return estadoHabitacionRepository.findByNombre(nombre);
+    }
 }
