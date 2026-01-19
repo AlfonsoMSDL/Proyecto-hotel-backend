@@ -19,4 +19,11 @@ public class EstadoReservaServiceImpl implements EstadoReservaService {
     public EstadoReserva save(EstadoReserva estadoReserva) {
         return estadoReservaRepository.save(estadoReserva);
     }
+
+    @Override
+    public EstadoReserva findByNombre(String nombre) {
+        return estadoReservaRepository.findByNombre(nombre);
+    }
+
+
 }

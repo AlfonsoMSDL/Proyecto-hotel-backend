@@ -5,4 +5,5 @@ import com.hotel.proyecto.proyecto_hotel.model.EstadoReserva;
 public interface EstadoReservaService {
     EstadoReserva findById(Long id);
     EstadoReserva save(EstadoReserva estadoReserva);
+    EstadoReserva findByNombre(String nombre);
 }
