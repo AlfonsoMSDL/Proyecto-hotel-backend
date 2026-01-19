@@ -135,3 +135,16 @@ CREATE TABLE estados_de_las_reservas (
                                                  ON DELETE NO ACTION
                                                  ON UPDATE NO ACTION
 );
+
+
+-- Creando inserciones iniciales
+
+-- Insertando estados de habitaciones
+
+INSERT INTO estados_habitaciones (nombre, descripcion)  VALUES ('Disponible','Habitacion disponible para reservar'),
+                                                               ('Ocupada','Habitacion ocupada por inquilinos'),
+                                                               ('En mantenimiento','Habitacion en mantenimiento'),
+                                                               ('Reservada','Habitacion reservada por un cliente.');
+-- Insertando estados de reservas
+INSERT INTO estados_reservas (nombre,descripcion) VALUES ('Completada','Reservacion completada correctamente'),
+                                                         ('Cancelada','El cliente cancelo la reseracion');
