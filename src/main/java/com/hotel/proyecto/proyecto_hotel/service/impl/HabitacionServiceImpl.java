@@ -154,7 +154,8 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     @Override
     public List<GetHabitacion> filtrarPorDisponibilidadDeFechas(Timestamp fechaLlegada, Timestamp fechaSalida) {
-        return List.of();
+        List<Habitacion> habitaciones = habitacionRepository.findHabitacionesDisponiblesEnRango(fechaLlegada,fechaSalida);
+        return habitacionMapper.toGetHabitacionList(habitaciones);
     }
 
     @Override

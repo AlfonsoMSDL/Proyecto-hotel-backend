@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Slf4j
@@ -62,6 +63,13 @@ public class HabitacionController {
     public ResponseEntity<List<GetHabitacion>> filtrarPorRangoDePrecio(@RequestParam Double precioMinimo,@RequestParam Double precioMaximo) {
 
         List<GetHabitacion> habitaciones = habitacionService.filtrarPorRangoDePrecio(precioMinimo,precioMaximo);
+        return ResponseEntity.ok(habitaciones);
+    }
+
+    @GetMapping("/disponibilidad_fecha")
+    public ResponseEntity<List<GetHabitacion>> filtrarPorDisponibilidadDeFechas(@RequestParam Timestamp fechaLlegada, @RequestParam Timestamp fechaSalida){
+        List<GetHabitacion> habitaciones = habitacionService.filtrarPorDisponibilidadDeFechas(fechaLlegada,fechaSalida);
+
         return ResponseEntity.ok(habitaciones);
     }
 
