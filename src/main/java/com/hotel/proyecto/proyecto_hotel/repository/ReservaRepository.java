@@ -33,4 +33,20 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             @Param("idHabitacion") Long idHabitacion
     );
 
+    /*Mostrar el historial de reservas de un usuario filtrado por un estado específico*/
+    @Query("""
+        SELECT r FROM Reserva r
+            JOIN r.estadosDeLaReserva edlr
+            JOIN edlr.estadoReserva er
+        WHERE r.usuario.id = :idUsuario
+          AND er.nombre = :estado
+          AND edlr.fechaFin IS NULL
+        ORDER BY r.fechaLlegada DESC
+    """)
+    List<Reserva> findHistorialReservasPorUsuarioYEstado(
+            @Param("idUsuario") Long idUsuario,
+            @Param("estado") String estado
+    );
+
+
 }

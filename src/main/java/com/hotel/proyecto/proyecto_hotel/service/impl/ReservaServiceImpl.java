@@ -1,6 +1,7 @@
 package com.hotel.proyecto.proyecto_hotel.service.impl;
 
 import com.hotel.proyecto.proyecto_hotel.dto.request.SaveReserva;
+import com.hotel.proyecto.proyecto_hotel.dto.response.GetHistorialReserva;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetReserva;
 import com.hotel.proyecto.proyecto_hotel.exception.ReservaCruzadaException;
 import com.hotel.proyecto.proyecto_hotel.mapper.ReservaMapper;
@@ -99,8 +100,25 @@ public class ReservaServiceImpl implements ReservaService {
 
     //Este metodo lo voy a usar para filtrar por las reservas completadas de una habitacion
     @Override
-    public List<GetReserva> buscarReservasCompeltadasPorHabitacion(Long idHabitacion) {
+    public List<GetReserva> buscarReservasCompletadasPorHabitacion(Long idHabitacion) {
         List<Reserva> reservas = reservaRepository.findReservasCompletadasActualesPorHabitacion(idHabitacion);
         return reservaMapper.toGetReservaList(reservas);
+    }
+
+    @Override
+    @Transactional
+    public List<GetHistorialReserva> historialReservasPorUsuarioYEstadoReserva(Long idUsuario, String estado) {
+        List<Reserva> reservas = reservaRepository.findHistorialReservasPorUsuarioYEstado(idUsuario,estado);
+
+        return reservas.stream()
+                .map(r ->
+                    new GetHistorialReserva(
+                        r.getId(),
+                        r.getHabitacion().getNumero(),
+                        r.getFechaLlegada(),
+                        r.getFechaSalida(),
+                        estado)
+                )
+                .toList();
     }
 }

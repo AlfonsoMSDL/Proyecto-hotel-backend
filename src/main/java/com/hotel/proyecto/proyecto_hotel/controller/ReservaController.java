@@ -1,6 +1,7 @@
 package com.hotel.proyecto.proyecto_hotel.controller;
 
 import com.hotel.proyecto.proyecto_hotel.dto.request.SaveReserva;
+import com.hotel.proyecto.proyecto_hotel.dto.response.GetHistorialReserva;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetReserva;
 import com.hotel.proyecto.proyecto_hotel.exception.ReservaCruzadaException;
 import com.hotel.proyecto.proyecto_hotel.model.Reserva;
@@ -29,8 +30,15 @@ public class ReservaController {
     }
 
     @GetMapping("/habitaciones/{idHabitacion}")
-    public ResponseEntity<List<GetReserva>> buscarReservasCompeltadasPorHabitacion(@PathVariable Long idHabitacion){
-        List<GetReserva> reservas = reservaService.buscarReservasCompeltadasPorHabitacion(idHabitacion);
+    public ResponseEntity<List<GetReserva>> buscarReservasCompletadasPorHabitacion(@PathVariable Long idHabitacion){
+        List<GetReserva> reservas = reservaService.buscarReservasCompletadasPorHabitacion(idHabitacion);
         return ResponseEntity.ok(reservas);
+    }
+
+    @GetMapping("/mis_reservas")
+    public ResponseEntity<List<GetHistorialReserva>> historialReservasPorUsuarioYEstadoReserva(@RequestParam Long idUsuario, @RequestParam String estado){
+        List<GetHistorialReserva> historialReservas = reservaService.historialReservasPorUsuarioYEstadoReserva(idUsuario,estado);
+
+        return ResponseEntity.ok(historialReservas);
     }
 }
