@@ -6,6 +6,8 @@ import com.hotel.proyecto.proyecto_hotel.model.Reserva;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ReservaMapper {
     Reserva toReservaFromSaveReserva(SaveReserva reserva);
@@ -13,4 +15,6 @@ public interface ReservaMapper {
     @Mapping(source = "habitacion.id", target = "idHabitacion")
     @Mapping(source = "usuario.id", target = "idUsuario")
     GetReserva toGetReserva(Reserva reserva);
+
+    List<GetReserva> toGetReservaList(List<Reserva> reservas);
 }

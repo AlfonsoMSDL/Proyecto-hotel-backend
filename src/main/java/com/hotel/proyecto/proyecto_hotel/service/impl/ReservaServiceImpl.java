@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -95,4 +96,11 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.toGetReserva(reservaGuardada);
     }
     public Reserva findById(Long id) {return reservaRepository.findById(id).orElse(null);}
+
+    //Este metodo lo voy a usar para filtrar por las reservas completadas de una habitacion
+    @Override
+    public List<GetReserva> buscarReservasCompeltadasPorHabitacion(Long idHabitacion) {
+        List<Reserva> reservas = reservaRepository.findReservasCompletadasActualesPorHabitacion(idHabitacion);
+        return reservaMapper.toGetReservaList(reservas);
+    }
 }
