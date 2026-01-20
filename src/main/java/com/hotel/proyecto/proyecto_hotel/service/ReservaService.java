@@ -11,6 +11,6 @@ import java.util.List;
 public interface ReservaService {
     GetReserva save(SaveReserva reserva);
     Reserva  findById(Long id);
-    List<GetReserva> buscarReservasCompletadasPorHabitacion(Long idHabitacion);
+    List<GetReserva> buscarReservasConfirmadasPorHabitacion(Long idHabitacion);
     List<GetHistorialReserva> historialReservasPorUsuarioYEstadoReserva(Long idUsuario,String estado);
 }

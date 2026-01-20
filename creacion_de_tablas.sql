@@ -146,5 +146,6 @@ INSERT INTO estados_habitaciones (nombre, descripcion)  VALUES ('Disponible','Ha
                                                                ('En mantenimiento','Habitacion en mantenimiento'),
                                                                ('Reservada','Habitacion reservada por un cliente.');
 -- Insertando estados de reservas
-INSERT INTO estados_reservas (nombre,descripcion) VALUES ('Completada','Reservacion completada correctamente'),
-                                                         ('Cancelada','El cliente cancelo la reservacion');
+INSERT INTO estados_reservas (nombre,descripcion) VALUES ('Completada','El cliente ya fue al hotel'),
+                                                         ('Cancelada','El cliente cancelo la reservacion'),
+                                                         ('Confirmada','El cliente crea la reserva correctamente');

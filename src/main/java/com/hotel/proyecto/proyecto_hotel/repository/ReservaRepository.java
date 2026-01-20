@@ -25,11 +25,11 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
         SELECT r FROM Reserva r
             JOIN r.estadosDeLaReserva edlr
             JOIN edlr.estadoReserva er
-        WHERE er.nombre = 'Completada'
+        WHERE er.nombre = 'Confirmada'
           AND edlr.fechaFin IS NULL
           AND r.habitacion.id = :idHabitacion
     """)
-    List<Reserva> findReservasCompletadasActualesPorHabitacion(
+    List<Reserva> findReservasConfirmadasActualesPorHabitacion(
             @Param("idHabitacion") Long idHabitacion
     );
 

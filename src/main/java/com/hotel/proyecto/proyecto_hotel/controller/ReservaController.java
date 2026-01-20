@@ -31,7 +31,7 @@ public class ReservaController {
 
     @GetMapping("/habitaciones/{idHabitacion}")
     public ResponseEntity<List<GetReserva>> buscarReservasCompletadasPorHabitacion(@PathVariable Long idHabitacion){
-        List<GetReserva> reservas = reservaService.buscarReservasCompletadasPorHabitacion(idHabitacion);
+        List<GetReserva> reservas = reservaService.buscarReservasConfirmadasPorHabitacion(idHabitacion);
         return ResponseEntity.ok(reservas);
     }
 

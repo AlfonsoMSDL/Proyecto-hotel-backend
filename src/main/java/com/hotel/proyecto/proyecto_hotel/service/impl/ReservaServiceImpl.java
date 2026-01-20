@@ -66,8 +66,8 @@ public class ReservaServiceImpl implements ReservaService {
         Reserva reservaGuardada = reservaRepository.save(reservaGuardar);
         log.info("Reserva guardada correctamente "+reservaGuardada);
 
-        //Traigo el estado de reserva Completada, para agregar la resera a estados de la reserva
-        EstadoReserva estadoReserva = estadoReservaService.findByNombre("Completada");
+        //Traigo el estado de reserva Confirmada, para agregar la resera a estados de la reserva
+        EstadoReserva estadoReserva = estadoReservaService.findByNombre("Confirmada");
 
         //Teniendo la resera creada y el estado que se le va a poner a la reserva
         // Procedemos a insertar un estado de la reserva, que relacione el estado
@@ -100,8 +100,8 @@ public class ReservaServiceImpl implements ReservaService {
 
     //Este metodo lo voy a usar para filtrar por las reservas completadas de una habitacion
     @Override
-    public List<GetReserva> buscarReservasCompletadasPorHabitacion(Long idHabitacion) {
-        List<Reserva> reservas = reservaRepository.findReservasCompletadasActualesPorHabitacion(idHabitacion);
+    public List<GetReserva> buscarReservasConfirmadasPorHabitacion(Long idHabitacion) {
+        List<Reserva> reservas = reservaRepository.findReservasConfirmadasActualesPorHabitacion(idHabitacion);
         return reservaMapper.toGetReservaList(reservas);
     }
 
