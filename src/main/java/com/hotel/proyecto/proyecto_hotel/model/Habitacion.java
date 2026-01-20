@@ -35,10 +35,9 @@ public class Habitacion implements Serializable {
     @OneToMany(mappedBy = "habitacion", cascade = CascadeType.ALL)
     private List<Reserva> reservas;
 
-    public void addFoto(Foto foto) {
-        fotos.add(foto);
-        foto.setHabitacion(this);
-    }
+    @ToString.Exclude
+    @OneToMany(mappedBy = "habitacion" , cascade = CascadeType.ALL)
+    private List<EstadoDeLaHabitacion> estados;
 
 
 
