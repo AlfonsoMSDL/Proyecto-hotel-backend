@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "estados_de_las_habitaciones")
@@ -28,8 +29,7 @@ public class EstadoDeLaHabitacion implements Serializable {
     private EstadoHabitacion estadoHabitacion;
 
     @Column(name = "fecha_inicio")
-    @CreationTimestamp
-    private Date fechaInicio;
+    private Timestamp fechaInicio;
     @Column(name = "fecha_fin")
-    private Date fechaFin;
+    private Timestamp fechaFin;
 }

@@ -42,8 +42,8 @@ CREATE TABLE estados_de_las_habitaciones (
     id BIGSERIAL PRIMARY KEY NOT NULL ,
     id_estado_habitacion BIGINT REFERENCES estados_habitaciones(id),
     id_habitacion BIGINT REFERENCES habitaciones(id),
-    fecha_inicio DATE NOT NULL,
-    fecha_fin DATE
+    fecha_inicio TIMESTAMP NOT NULL,
+    fecha_fin TIMESTAMP
 );
 
 -- =========================
