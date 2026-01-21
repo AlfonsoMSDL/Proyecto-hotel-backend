@@ -31,7 +31,6 @@ public class EstadoDeLaReserva implements Serializable {
     private EstadoReserva estadoReserva;
 
     @Column(name = "fecha_inicio")
-    @CreationTimestamp
     private Timestamp fechaInicio;
 
     @Column(name = "fecha_fin")
