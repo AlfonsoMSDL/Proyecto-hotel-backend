@@ -30,7 +30,7 @@ public class ReservaController {
     }
 
     @GetMapping("/habitaciones/{idHabitacion}")
-    public ResponseEntity<List<GetReserva>> buscarReservasCompletadasPorHabitacion(@PathVariable Long idHabitacion){
+    public ResponseEntity<List<GetReserva>> buscarReservasConfirmadasPorHabitacion(@PathVariable Long idHabitacion){
         List<GetReserva> reservas = reservaService.buscarReservasConfirmadasPorHabitacion(idHabitacion);
         return ResponseEntity.ok(reservas);
     }
@@ -40,5 +40,11 @@ public class ReservaController {
         List<GetHistorialReserva> historialReservas = reservaService.historialReservasPorUsuarioYEstadoReserva(idUsuario,estado);
 
         return ResponseEntity.ok(historialReservas);
+    }
+
+    @PutMapping("/cancelar/{id}")
+    public ResponseEntity<Void >cancelarReserva(@PathVariable Long id){
+        reservaService.cancelarReserva(id);
+        return ResponseEntity.noContent().build();
     }
 }

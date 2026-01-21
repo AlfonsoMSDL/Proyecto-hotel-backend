@@ -13,4 +13,5 @@ public interface ReservaService {
     Reserva  findById(Long id);
     List<GetReserva> buscarReservasConfirmadasPorHabitacion(Long idHabitacion);
     List<GetHistorialReserva> historialReservasPorUsuarioYEstadoReserva(Long idUsuario,String estado);
+    void cancelarReserva(Long idReserva);
 }

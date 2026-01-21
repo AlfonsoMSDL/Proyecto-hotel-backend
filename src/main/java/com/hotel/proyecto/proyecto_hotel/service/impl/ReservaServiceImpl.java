@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +77,7 @@ public class ReservaServiceImpl implements ReservaService {
         estadoDeLaReserva.setId(new EstadoDeLaReservaId());
         estadoDeLaReserva.setEstadoReserva(estadoReserva);
         estadoDeLaReserva.setReserva(reservaGuardar);
+        estadoDeLaReserva.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
 
         //Guardo el estado de la reserva creada
         estadoDeLaReservaService.save(estadoDeLaReserva);
@@ -89,10 +91,25 @@ public class ReservaServiceImpl implements ReservaService {
         EstadoDeLaHabitacion estadoDeLaHabitacion = new EstadoDeLaHabitacion();
         estadoDeLaHabitacion.setHabitacion(habitacion);
         estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
+        estadoDeLaHabitacion.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
 
         //Guardo el estado de la habitacion usada en la reservacion
         estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
         log.info("Estado de la habitacion guardado correctamente: "+estadoDeLaHabitacion);
+
+        //Al estado anterior de esa habitacion, se le pone una fecha de fin
+        //la cual sera la fecha de inicio del nuevo estado
+        //el estado anterior sera de Disponible ya que para que una habitacion
+        //se pueda reservar, debe estar disponible
+        estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
+        EstadoDeLaHabitacion estadoDeLaHabitacionUpdate = estadoDeLaHabitacionService.findByHabitacionAndEstadoHabitacionAndFechaFinIsNull(habitacion, estadoHabitacion);
+
+        log.info("Antes de actualizar el estado anterior de la habitacion "+estadoDeLaHabitacionUpdate);
+        //Luego de tener ese estado de la habitacion, actualizo su fecha de fin
+        estadoDeLaHabitacionUpdate.setFechaFin(estadoDeLaHabitacion.getFechaInicio());
+        //Luego de actualizar, guardo los cambios
+        estadoDeLaHabitacionUpdate =estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
+        log.info("Se actualiza el estado anterior de la habitacion "+estadoDeLaHabitacionUpdate);
 
         return reservaMapper.toGetReserva(reservaGuardada);
     }
@@ -120,5 +137,61 @@ public class ReservaServiceImpl implements ReservaService {
                         estado)
                 )
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void cancelarReserva(Long idReserva) {
+        //Primero busco la reserva que se va a cancelar
+        Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
+        log.info("Reserva a cancelar \n{}",reserva);
+        //Luego busco el estado de Cancelada, para crear el estado de la reserva
+        EstadoReserva  estadoReserva = estadoReservaService.findByNombre("Cancelada");
+        //Luego creo el estado de la reserva para relacionar la reserva con el nuevo estado
+        log.info("Se le asigna el estado de Cancelada a esa reserva");
+        EstadoDeLaReserva estadoDeLaReserva = new EstadoDeLaReserva();
+        estadoDeLaReserva.setId(new EstadoDeLaReservaId());
+        estadoDeLaReserva.setEstadoReserva(estadoReserva);
+        estadoDeLaReserva.setReserva(reserva);
+        estadoDeLaReserva.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
+        //Guardo el nuevo estado de la reserva
+        estadoDeLaReservaService.save(estadoDeLaReserva);
+
+        //Luego pongo una fecha de fin al estado de la reserva anterior
+        //Por logica este estado es el de confirmada, ya que si cancelo una reserva
+        //Es porque antes estuvo confirmada
+        //Asi que busco el estado de la reserva con estado Confirmada y la reserva que quiero cancelar
+        estadoReserva = estadoReservaService.findByNombre("Confirmada");
+        EstadoDeLaReserva estadoDeLaReservaUpdate = estadoDeLaReservaService.findByReservaAndEstadoReserva(reserva, estadoReserva);
+        //Luego de tener ese estado de la reserva, le asigno una fecha de fin
+        //para indicar que ese estado finalizo, la fecha de fin sera la fecha de inicio
+        // del nuevo estado de la reserva Cancelada
+        estadoDeLaReservaUpdate.setFechaFin(estadoDeLaReserva.getFechaInicio());
+        //ahora hago el save pero en realidad es un update
+        estadoDeLaReservaService.save(estadoDeLaReservaUpdate);
+        log.info("Se modifica el estado anterior de esa reserva, poniendole la fecha de fin");
+
+        //Ahora hago lo mismo para el estado de la habitacion, ya que debe quedar disponible, creo un nuevo estado de la habitacion y le asigno una fecha de fin al estado anterior
+        EstadoHabitacion estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
+        Habitacion habitacion = reserva.getHabitacion();
+
+
+        EstadoDeLaHabitacion estadoDeLaHabitacion  = new EstadoDeLaHabitacion();
+        estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
+        estadoDeLaHabitacion.setHabitacion(habitacion);
+        estadoDeLaHabitacion.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
+
+        estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
+        log.info("Se le asigna a la habitacion de la reserva el estado de Disponible");
+
+        //Procedo a ponerle una fecha de fin al estado anterior
+        //El estado anterior es Reservada porque para cancelar una reservacion, previamente debe estar reservada
+        estadoHabitacion = estadoHabitacionService.findByNombre("Reservada");
+        EstadoDeLaHabitacion estadoDeLaHabitacionUpdate = estadoDeLaHabitacionService.findByHabitacionAndEstadoHabitacionAndFechaFinIsNull(habitacion, estadoHabitacion);
+        estadoDeLaHabitacionUpdate.setFechaFin(estadoDeLaHabitacion.getFechaInicio());
+
+        estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
+        log.info("Se modifica el estado anterior de esa habitacion, poniendole la fecha de fin");
+
     }
 }
