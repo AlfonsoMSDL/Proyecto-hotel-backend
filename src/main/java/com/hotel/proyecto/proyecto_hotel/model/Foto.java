@@ -24,8 +24,12 @@ public class Foto implements Serializable {
     private Long id;
     private String nombre;
     private String ruta;
-    @Column(name = "fecha_creacion")
-    @CreationTimestamp
+    @Column(
+            name = "fecha_creacion",
+            insertable = false,
+            updatable = false,
+            nullable = false
+    )
     private Timestamp fechaCreacion;
 
     @ManyToOne
