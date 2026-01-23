@@ -15,10 +15,12 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     /*Creando consulta para comprobar si las fechas de una reserva de una habitacion
     se cruzan con las fechas de otra reserva ya existente de la misma habitacion*/
-    @Query("SELECT r FROM Reserva r " +
-            "WHERE r.habitacion.id = :idHabitacion " +
-            "AND r.fechaLlegada  < :fechaSalida " +
-            "AND r.fechaSalida > :fechaLlegada")
+    @Query("""
+            SELECT r FROM Reserva r
+                WHERE r.habitacion.id = :idHabitacion 
+                AND r.fechaLlegada  < :fechaSalida 
+                AND r.fechaSalida > :fechaLlegada
+    """)
     Optional<Reserva> encontrarReservaCruzada(Long idHabitacion, Timestamp fechaLlegada, Timestamp fechaSalida);
 
     @Query("""
@@ -47,6 +49,21 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             @Param("idUsuario") Long idUsuario,
             @Param("estado") String estado
     );
+
+    //Consulta para buscar las reservas actuales de una habitacion especifica de un cliente dado su nombre y el numero de la habitacion
+    @Query("""
+        SELECT r FROM Reserva r
+            JOIN r.usuario c
+            JOIN r.habitacion h
+            JOIN r.estadosDeLaReserva edlr
+            JOIN edlr.estadoReserva er
+        WHERE (lower(c.nombre) LIKE CONCAT('%', lower(:nombreCompleto), '%')
+            OR lower(c.apellido) LIKE CONCAT('%', lower(:nombreCompleto), '%'))
+          AND h.numero = :numHabitacion
+          AND edlr.fechaFin IS NULL
+          AND er.nombre = 'Confirmada'
+    """)
+    List<Reserva> buscarReservasDeClienteDadoNumHabitacion(@Param("nombreCompleto") String nombreCompleto,@Param("numHabitacion") int numHabitacion);
 
 
 }

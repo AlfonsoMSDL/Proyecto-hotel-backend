@@ -47,4 +47,12 @@ public class ReservaController {
         reservaService.cancelarReserva(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/clientes/{nombreCompleto}/habitaciones/{numHabitacion}")
+    public ResponseEntity<List<GetReserva>> buscarReservasDeClienteDadoNumHabitacion(@PathVariable String nombreCompleto, @PathVariable Integer numHabitacion){
+
+        List<GetReserva> reservas = reservaService.buscarReservasDeClienteDadoNumHabitacion(nombreCompleto, numHabitacion);
+
+        return ResponseEntity.ok(reservas);
+    }
 }

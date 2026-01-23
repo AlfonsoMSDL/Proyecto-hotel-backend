@@ -194,4 +194,10 @@ public class ReservaServiceImpl implements ReservaService {
         log.info("Se modifica el estado anterior de esa habitacion, poniendole la fecha de fin");
 
     }
+
+    @Override
+    public List<GetReserva> buscarReservasDeClienteDadoNumHabitacion(String nombreCompleto, int numHabitacion) {
+        List<Reserva> reservas = reservaRepository.buscarReservasDeClienteDadoNumHabitacion(nombreCompleto, numHabitacion);
+        return reservaMapper.toGetReservaList(reservas);
+    }
 }
