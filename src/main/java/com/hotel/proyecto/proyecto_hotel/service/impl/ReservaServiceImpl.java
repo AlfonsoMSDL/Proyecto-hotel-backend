@@ -147,27 +147,6 @@ public class ReservaServiceImpl implements ReservaService {
         estadoDeLaReservaService.save(estadoDeLaReservaUpdate);
         log.info("Se modifica el estado anterior de esa reserva, poniendole la fecha de fin");
 
-        //Ahora hago lo mismo para el estado de la habitacion, ya que debe quedar disponible, creo un nuevo estado de la habitacion y le asigno una fecha de fin al estado anterior
-        EstadoHabitacion estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
-        Habitacion habitacion = reserva.getHabitacion();
-
-
-        EstadoDeLaHabitacion estadoDeLaHabitacion  = new EstadoDeLaHabitacion();
-        estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
-        estadoDeLaHabitacion.setHabitacion(habitacion);
-        estadoDeLaHabitacion.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
-
-        estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
-        log.info("Se le asigna a la habitacion de la reserva el estado de Disponible");
-
-        //Procedo a ponerle una fecha de fin al estado anterior
-        //El estado anterior es Reservada porque para cancelar una reservacion, previamente debe estar reservada
-        estadoHabitacion = estadoHabitacionService.findByNombre("Reservada");
-        EstadoDeLaHabitacion estadoDeLaHabitacionUpdate = estadoDeLaHabitacionService.findByHabitacionAndEstadoHabitacionAndFechaFinIsNull(habitacion, estadoHabitacion);
-        estadoDeLaHabitacionUpdate.setFechaFin(estadoDeLaHabitacion.getFechaInicio());
-
-        estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
-        log.info("Se modifica el estado anterior de esa habitacion, poniendole la fecha de fin");
 
     }
 
@@ -216,6 +195,56 @@ public class ReservaServiceImpl implements ReservaService {
 
         estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
         log.info("Se actualizo el estado anterior de la habitacion con la fecha de fin");
+
+    }
+
+    @Override
+    @Transactional
+    public void marcarSalida(Long idReserva) {
+        //Traigo la reserva que se va a marcar como completada
+        Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
+        log.info("Reserva a marcar salida "+reserva);
+        //Busco el estado de reserva Completada
+        EstadoReserva estadoReserva = estadoReservaService.findByNombre("Completada");
+        //Creo un nuevo estado de la reserva
+        EstadoDeLaReserva estadoDeLaReserva  = new EstadoDeLaReserva();
+        estadoDeLaReserva.setId(new EstadoDeLaReservaId());
+        estadoDeLaReserva.setEstadoReserva(estadoReserva);
+        estadoDeLaReserva.setReserva(reserva);
+        estadoDeLaReserva.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
+        estadoDeLaReserva.setFechaFin(Timestamp.valueOf(LocalDateTime.now()));
+        estadoDeLaReservaService.save(estadoDeLaReserva);
+        log.info("La reserva pasa a estado de Completada");
+
+        //Al estado anterior de esa reserva (Confirmada) le asigno una fecha de fin
+        estadoReserva = estadoReservaService.findByNombre("Confirmada");
+        EstadoDeLaReserva estadoDeLaReservaUpdate = estadoDeLaReservaService.findByReservaAndEstadoReserva(reserva, estadoReserva);
+        estadoDeLaReservaUpdate.setFechaFin(Timestamp.valueOf(LocalDateTime.now()));
+        estadoDeLaReservaService.save(estadoDeLaReservaUpdate);
+        log.info("El estado anterior de la reserva, se le pone una fecha de fin");
+
+        //Ahora hago lo mismo para el estado de la habitacion, ya que debe quedar disponible, creo un nuevo estado de la habitacion y le asigno una fecha de fin al estado anterior
+        EstadoHabitacion estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
+        Habitacion habitacion = reserva.getHabitacion();
+
+
+        EstadoDeLaHabitacion estadoDeLaHabitacion  = new EstadoDeLaHabitacion();
+        estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
+        estadoDeLaHabitacion.setHabitacion(habitacion);
+        estadoDeLaHabitacion.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
+
+        estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
+        log.info("Se le asigna a la habitacion de la reserva el estado de Disponible");
+
+        //Procedo a ponerle una fecha de fin al estado anterior
+        //El estado anterior es Reservada porque para cancelar una reservacion, previamente debe estar reservada
+        estadoHabitacion = estadoHabitacionService.findByNombre("Ocupada");
+        EstadoDeLaHabitacion estadoDeLaHabitacionUpdate = estadoDeLaHabitacionService.findByHabitacionAndEstadoHabitacionAndFechaFinIsNull(habitacion, estadoHabitacion);
+        estadoDeLaHabitacionUpdate.setFechaFin(estadoDeLaHabitacion.getFechaInicio());
+
+        estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
+        log.info("Se modifica el estado anterior de esa habitacion, poniendole la fecha de fin");
+
 
     }
 }

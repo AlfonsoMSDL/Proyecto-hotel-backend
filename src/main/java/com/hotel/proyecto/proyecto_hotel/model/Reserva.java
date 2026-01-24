@@ -33,6 +33,7 @@ public class Reserva implements Serializable {
     @JoinColumn(name = "id_habitacion")
     private Habitacion habitacion;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL)
     private List<EstadoDeLaReserva> estadosDeLaReserva;
 

@@ -68,5 +68,12 @@ public class ReservaController {
 
     }
 
+    @PostMapping("/marcar-salida/{idReserva}")
+    public ResponseEntity<Object> marcarSalida(@PathVariable Long idReserva){
+
+        reservaService.marcarSalida(idReserva);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 
 }

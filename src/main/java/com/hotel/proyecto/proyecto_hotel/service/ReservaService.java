@@ -17,4 +17,6 @@ public interface ReservaService {
     List<GetReserva> buscarReservasDeClienteDadoNumHabitacion(String nombreCompleto, int numHabitacion);
 
     void marcarEntrada(Long idReserva);
+
+    void marcarSalida(Long idReserva);
 }
