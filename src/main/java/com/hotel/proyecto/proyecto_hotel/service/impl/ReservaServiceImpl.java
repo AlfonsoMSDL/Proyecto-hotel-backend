@@ -3,6 +3,7 @@ package com.hotel.proyecto.proyecto_hotel.service.impl;
 import com.hotel.proyecto.proyecto_hotel.dto.request.SaveReserva;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetHistorialReserva;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetReserva;
+import com.hotel.proyecto.proyecto_hotel.exception.FechaLlegadaNoIgualFechaActualException;
 import com.hotel.proyecto.proyecto_hotel.exception.ReservaCruzadaException;
 import com.hotel.proyecto.proyecto_hotel.mapper.ReservaMapper;
 import com.hotel.proyecto.proyecto_hotel.model.*;
@@ -16,7 +17,9 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -83,33 +86,6 @@ public class ReservaServiceImpl implements ReservaService {
         estadoDeLaReservaService.save(estadoDeLaReserva);
         log.info("Estado de la reserva guardada correctamente "+estadoDeLaReserva);
 
-        //Al crear la reserva correctamente, se debe asignar un estado a la habitacion de
-        // Reservada
-        EstadoHabitacion  estadoHabitacion = estadoHabitacionService.findByNombre("Reservada");
-
-        //Ahora relaciono el estado con la habitacion
-        EstadoDeLaHabitacion estadoDeLaHabitacion = new EstadoDeLaHabitacion();
-        estadoDeLaHabitacion.setHabitacion(habitacion);
-        estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
-        estadoDeLaHabitacion.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
-
-        //Guardo el estado de la habitacion usada en la reservacion
-        estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
-        log.info("Estado de la habitacion guardado correctamente: "+estadoDeLaHabitacion);
-
-        //Al estado anterior de esa habitacion, se le pone una fecha de fin
-        //la cual sera la fecha de inicio del nuevo estado
-        //el estado anterior sera de Disponible ya que para que una habitacion
-        //se pueda reservar, debe estar disponible
-        estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
-        EstadoDeLaHabitacion estadoDeLaHabitacionUpdate = estadoDeLaHabitacionService.findByHabitacionAndEstadoHabitacionAndFechaFinIsNull(habitacion, estadoHabitacion);
-
-        log.info("Antes de actualizar el estado anterior de la habitacion "+estadoDeLaHabitacionUpdate);
-        //Luego de tener ese estado de la habitacion, actualizo su fecha de fin
-        estadoDeLaHabitacionUpdate.setFechaFin(estadoDeLaHabitacion.getFechaInicio());
-        //Luego de actualizar, guardo los cambios
-        estadoDeLaHabitacionUpdate =estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
-        log.info("Se actualiza el estado anterior de la habitacion "+estadoDeLaHabitacionUpdate);
 
         return reservaMapper.toGetReserva(reservaGuardada);
     }
@@ -199,5 +175,47 @@ public class ReservaServiceImpl implements ReservaService {
     public List<GetReserva> buscarReservasDeClienteDadoNumHabitacion(String nombreCompleto, int numHabitacion) {
         List<Reserva> reservas = reservaRepository.buscarReservasDeClienteDadoNumHabitacion(nombreCompleto, numHabitacion);
         return reservaMapper.toGetReservaList(reservas);
+    }
+
+    @Override
+    @Transactional
+    public void marcarEntrada(Long idReserva) throws FechaLlegadaNoIgualFechaActualException {
+        /*Para que se pueda marcar la entrada, la fecha en que se quiera
+        marcar esa entrada debe ser igual a la fecha de la reserva sin
+        tener en cuenta la hora exacta, debe ser el mismo dia*/
+        //Busco la reserva que se va a marcar
+        Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
+        log.info("Reserva a marcar entrada {}",reserva);
+        Date fechaActual = Date.valueOf(LocalDate.now());
+        Date fechaLlegada = new Date(reserva.getFechaLlegada().getTime());
+        log.debug("Fecha de llegada {}",fechaLlegada);
+        log.debug("Fecha de actual {}",fechaActual);
+
+        if(fechaActual.compareTo(fechaLlegada)!=0){
+            log.info("La fecha de llegada debe ser igual a la fecha actual para que se pueda marcar la entrada.");
+            throw new FechaLlegadaNoIgualFechaActualException("La fecha de llegada debe ser igual a la fecha actual para que se pueda marcar la entrada.");
+        }
+
+        //Si las fechas son iguales entonces si se puede marcar la llegada
+
+        //Le doy a la habitacion un estado de Ocupada
+        EstadoHabitacion estadoHabitacion = estadoHabitacionService.findByNombre("Ocupada");
+        Habitacion habitacion = reserva.getHabitacion();
+        EstadoDeLaHabitacion estadoDeLaHabitacion = new EstadoDeLaHabitacion();
+        estadoDeLaHabitacion.setHabitacion(habitacion);
+        estadoDeLaHabitacion.setEstadoHabitacion(estadoHabitacion);
+        estadoDeLaHabitacion.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
+
+        estadoDeLaHabitacionService.save(estadoDeLaHabitacion);
+        log.info("Se guardo el nuevo estado de la habitacion a Ocupada");
+
+        //Ahora al estado anterior de la habitacion (Disponible) le doy una fecha de fin
+        estadoHabitacion = estadoHabitacionService.findByNombre("Disponible");
+        EstadoDeLaHabitacion estadoDeLaHabitacionUpdate = estadoDeLaHabitacionService.findByHabitacionAndEstadoHabitacionAndFechaFinIsNull(habitacion, estadoHabitacion);
+        estadoDeLaHabitacionUpdate.setFechaFin(Timestamp.valueOf(LocalDateTime.now()));
+
+        estadoDeLaHabitacionService.save(estadoDeLaHabitacionUpdate);
+        log.info("Se actualizo el estado anterior de la habitacion con la fecha de fin");
+
     }
 }

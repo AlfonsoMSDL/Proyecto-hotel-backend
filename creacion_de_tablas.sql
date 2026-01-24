@@ -143,8 +143,7 @@ CREATE TABLE estados_de_las_reservas (
 
 INSERT INTO estados_habitaciones (nombre, descripcion)  VALUES ('Disponible','Habitacion disponible para reservar'),
                                                                ('Ocupada','Habitacion ocupada por inquilinos'),
-                                                               ('En mantenimiento','Habitacion en mantenimiento'),
-                                                               ('Reservada','Habitacion reservada por un cliente.');
+                                                               ('En mantenimiento','Habitacion en mantenimiento');
 -- Insertando estados de reservas
 INSERT INTO estados_reservas (nombre,descripcion) VALUES ('Completada','El cliente ya fue al hotel'),
                                                          ('Cancelada','El cliente cancelo la reservacion'),
