@@ -52,16 +52,16 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     //Consulta para buscar las reservas actuales de una habitacion especifica de un cliente dado su nombre y el numero de la habitacion
     @Query("""
-        SELECT r FROM Reserva r
-            JOIN r.usuario c
-            JOIN r.habitacion h
-            JOIN r.estadosDeLaReserva edlr
-            JOIN edlr.estadoReserva er
-        WHERE (lower(c.nombre) LIKE CONCAT('%', lower(:nombreCompleto), '%')
-            OR lower(c.apellido) LIKE CONCAT('%', lower(:nombreCompleto), '%'))
-          AND h.numero = :numHabitacion
-          AND edlr.fechaFin IS NULL
-          AND er.nombre = 'Confirmada'
+    SELECT r FROM Reserva r
+        JOIN r.usuario c
+        JOIN r.habitacion h
+        JOIN r.estadosDeLaReserva edlr
+        JOIN edlr.estadoReserva er
+    WHERE REPLACE(LOWER(CONCAT(c.nombre, c.apellido)), ' ', '')
+          LIKE REPLACE(LOWER(CONCAT('%', :nombreCompleto, '%')), ' ', '')
+      AND h.numero = :numHabitacion
+      AND edlr.fechaFin IS NULL
+      AND er.nombre = 'Confirmada'
     """)
     List<Reserva> buscarReservasDeClienteDadoNumHabitacion(@Param("nombreCompleto") String nombreCompleto,@Param("numHabitacion") int numHabitacion);
 
