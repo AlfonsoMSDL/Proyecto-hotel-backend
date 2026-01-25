@@ -212,7 +212,6 @@ public class ReservaServiceImpl implements ReservaService {
         estadoDeLaReserva.setEstadoReserva(estadoReserva);
         estadoDeLaReserva.setReserva(reserva);
         estadoDeLaReserva.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
-        estadoDeLaReserva.setFechaFin(Timestamp.valueOf(LocalDateTime.now()));
         estadoDeLaReservaService.save(estadoDeLaReserva);
         log.info("La reserva pasa a estado de Completada");
 
