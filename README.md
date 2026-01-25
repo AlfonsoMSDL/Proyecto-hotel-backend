@@ -43,47 +43,54 @@ Estos modelos sirven como base para el desarrollo del sistema y ayudan a mantene
 
 ---
 ## ⚙️ Funcionalidades implementadas
-### 👤 Usuarios
+### 👤 Usuarios y autenticación
 
-- Registro de usuarios
-
-- Inicio de sesión con correo y clave
-
+- Registro de usuarios con rol de **cliente**
+- Inicio de sesión mediante correo y contraseña
 - Manejo de roles (cliente / admin)
+- Gestión de clientes por parte del administrador
 
 ### 🏨 Habitaciones
 
-- Creación y gestión de habitaciones
+- Creación de nuevas habitaciones por parte del administrador
+- Edición de la información de las habitaciones
+- Eliminación de habitaciones junto con toda su información asociada
+- Consulta de habitaciones disponibles en el hotel
+- Filtrado de habitaciones por tipo y precio
+- Filtrado de habitaciones por disponibilidad según fecha de inicio y fin
+- Asociación de múltiples imágenes a una habitación
+- Manejo de estados de la habitación (disponible, ocupada, en mantenimiento)
+- Actualización automática del estado de la habitación al marcar la entrada de un cliente
 
-- Consulta de habitaciones
+### 📅 Reservas
 
-- Filtrado por tipo y precio
-
-- Asociación de múltiples fotos a una habitación
-
-- Manejo de estados de la habitación
+- Creación de reservas por parte del cliente para un rango de fechas válido
+- Validación de fechas para garantizar que no se crucen reservas existentes
+- Visualización de un calendario de ocupación por habitación, bloqueando fechas no disponibles
+- Búsqueda de reservas por:
+  - Nombre del cliente
+  - Nombre del cliente y habitación reservada
+- Cancelación de reservas por parte del cliente
+- Manejo de estados de la reserva:
+  - Confirmada
+  - Cancelada
+  - Completada
+- Marcado de entrada del cliente (actualiza el estado de la habitación a ocupada)
+- Marcado de salida del cliente y actualización de la reserva a **Completada**
+- Visualización del historial de reservas del cliente (confirmadas, canceladas y completadas)
 
 ### 📄 Documentación
 
 - Documentación de la API disponible mediante **Swagger**
 
----
-## 🧩 Funcionalidades en desarrollo
-
-- ### Módulo de reservas
-
-  - Asociación entre usuario y habitación
-  - Manejo de fechas (llegada y salida)
-  - Lógica de disponibilidad
-  - Estados de la reserva (creada, confirmada, cancelada, etc.)
-
----
 ## 🚀 Próximas funcionalidades planeadas
 
 - Desarrollo del frontend con **React**
 - Integración completa frontend–backend
 - Implementación de una pasarela de pagos
+- Seguridad avanzada (JWT, control de accesos por rol)
 - Despliegue del sistema en **AWS**
+- Manejo de notificaciones (correo o sistema interno)
 
 ---
 ## ▶️ Ejecución del proyecto
