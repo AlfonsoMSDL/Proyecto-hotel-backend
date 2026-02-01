@@ -5,7 +5,6 @@ import com.hotel.proyecto.proyecto_hotel.dto.response.GetHistorialReserva;
 import com.hotel.proyecto.proyecto_hotel.dto.response.GetReserva;
 import com.hotel.proyecto.proyecto_hotel.exception.FechaLlegadaNoIgualFechaActualException;
 import com.hotel.proyecto.proyecto_hotel.exception.ReservaCruzadaException;
-import com.hotel.proyecto.proyecto_hotel.model.Reserva;
 import com.hotel.proyecto.proyecto_hotel.service.ReservaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,13 +20,10 @@ public class ReservaController {
     private ReservaService reservaService;
 
     @PostMapping
-    public ResponseEntity<Object> crearReserva(@RequestBody SaveReserva reserva){
-        try{
-            GetReserva reservaGuardada =  reservaService.save(reserva);
-            return  ResponseEntity.status(HttpStatus.CREATED).body(reservaGuardada);
-        }catch (ReservaCruzadaException e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<GetReserva> crearReserva(@RequestBody SaveReserva reserva){
+
+        GetReserva reservaGuardada =  reservaService.save(reserva);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservaGuardada);
     }
 
     @GetMapping("/habitaciones/{idHabitacion}")
@@ -38,6 +34,7 @@ public class ReservaController {
 
     @GetMapping("/mis_reservas")
     public ResponseEntity<List<GetHistorialReserva>> historialReservasPorUsuarioYEstadoReserva(@RequestParam Long idUsuario, @RequestParam String estado){
+
         List<GetHistorialReserva> historialReservas = reservaService.historialReservasPorUsuarioYEstadoReserva(idUsuario,estado);
 
         return ResponseEntity.ok(historialReservas);
@@ -58,18 +55,14 @@ public class ReservaController {
     }
 
     @PostMapping("/marcar-entrada/{idReserva}")
-    public ResponseEntity<Object> marcarEntrada(@PathVariable Long idReserva){
-        try{
-            reservaService.marcarEntrada(idReserva);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch (FechaLlegadaNoIgualFechaActualException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("\"error\":\""+e.getMessage()+"\"");
-        }
+    public ResponseEntity<?> marcarEntrada(@PathVariable Long idReserva){
 
+        reservaService.marcarEntrada(idReserva);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/marcar-salida/{idReserva}")
-    public ResponseEntity<Object> marcarSalida(@PathVariable Long idReserva){
+    public ResponseEntity<?> marcarSalida(@PathVariable Long idReserva){
 
         reservaService.marcarSalida(idReserva);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

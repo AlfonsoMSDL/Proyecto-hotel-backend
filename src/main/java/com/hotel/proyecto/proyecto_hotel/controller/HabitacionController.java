@@ -11,6 +11,7 @@ import com.hotel.proyecto.proyecto_hotel.model.enums.TipoHabitacion;
 import com.hotel.proyecto.proyecto_hotel.service.HabitacionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,13 +32,12 @@ public class HabitacionController {
     }
 
     @PostMapping
-    public Object guardar(@ModelAttribute HabitacionSave habitacionSave, @RequestParam(required = false) List<MultipartFile> imagenes) {
-        try{
-            return habitacionService.save(habitacionSave, imagenes);
-        }catch (ListaImagenesVaciaException | TipoImagenIncorrectoException | NumeroHabitacionRepetidaException e){
-            return "\"error\":\""+e.getMessage()+"\"";
-        }
+    public ResponseEntity<GetHabitacion> guardar(
+            @ModelAttribute HabitacionSave habitacionSave,
+            @RequestParam(required = false) List<MultipartFile> imagenes) {
 
+        GetHabitacion habitacion = habitacionService.save(habitacionSave, imagenes);
+        return ResponseEntity.status(HttpStatus.CREATED).body(habitacion);
     }
 
     @DeleteMapping("/{id}")
@@ -74,17 +74,10 @@ public class HabitacionController {
     }
 
     @PostMapping("/{idHabitacion}/fotos")
-    public ResponseEntity<Object> agregarFotoAHabitacion(@RequestParam(required = false) MultipartFile imagen, @PathVariable Long idHabitacion) {
-        try{
-            GetFoto fotoGuardada = habitacionService.agregarFotoAHabitacion(idHabitacion,imagen);
-            return ResponseEntity.ok(fotoGuardada);
-        }catch (HabitacionNoEncontradaException | TipoImagenIncorrectoException e){
-            String error= "\"error\":\""+e.getMessage()+"\"";
-            return ResponseEntity.badRequest().body(error);
-        }
+    public ResponseEntity<GetFoto> agregarFotoAHabitacion(@RequestParam(required = false) MultipartFile imagen, @PathVariable Long idHabitacion) {
 
-
-
+        GetFoto fotoGuardada = habitacionService.agregarFotoAHabitacion(idHabitacion,imagen);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fotoGuardada);
     }
 
     @PutMapping("/{id}")

@@ -24,12 +24,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioMapper usuarioMapper;
 
     @Override
-    public GetUsuario save(UsuarioSave usuarioSave) throws UsuarioRegistrarCorreoExistenteExcepcion {
+    public GetUsuario save(UsuarioSave usuarioSave) {
         //Primero verifico que el correo no este registrado en la BD
         boolean existeCorreo = usuarioRepository.existsByCorreo(usuarioSave.correo());
         if (existeCorreo) {
             //Lanzo una excepcion que diga que el correo ya existe
-            throw new UsuarioRegistrarCorreoExistenteExcepcion("Error, el correo ya está registrado");
+            throw new UsuarioRegistrarCorreoExistenteExcepcion("El correo ya está registrado");
         }
         Usuario usuario = usuarioMapper.toUsuarioFromUsuarioSave(usuarioSave);
         usuario.setRol(Rol.CLIENTE);

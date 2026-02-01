@@ -1,5 +1,6 @@
 package com.hotel.proyecto.proyecto_hotel.service.impl;
 
+import com.hotel.proyecto.proyecto_hotel.dto.response.GetUsuario;
 import com.hotel.proyecto.proyecto_hotel.exception.UsuarioLoginClaveErroneaException;
 import com.hotel.proyecto.proyecto_hotel.exception.UsuarioLoginNoEncontradoException;
 import com.hotel.proyecto.proyecto_hotel.mapper.UsuarioMapper;
@@ -18,7 +19,7 @@ public class AuthServiceNoSecurity implements AuthService {
     private UsuarioMapper usuarioMapper;
 
     @Override
-    public Object login(String correo, String clave) throws UsuarioLoginNoEncontradoException, UsuarioLoginClaveErroneaException{
+    public GetUsuario login(String correo, String clave){
         //Buscar usuario por correo
         Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreo(correo);
         if(usuarioOptional.isEmpty()) {

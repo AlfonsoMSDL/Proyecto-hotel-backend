@@ -6,6 +6,8 @@ import com.hotel.proyecto.proyecto_hotel.exception.UsuarioLoginNoEncontradoExcep
 import com.hotel.proyecto.proyecto_hotel.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,13 +20,8 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping
-    public Object login(@RequestParam String correo, @RequestParam String clave){
-        try{
-            return authService.login(correo, clave);
-        }catch (UsuarioLoginNoEncontradoException | UsuarioLoginClaveErroneaException x){
-            return "\"error\":\""+x.getMessage()+"\"";
-        }
-
-
+    public ResponseEntity<GetUsuario> login(@RequestParam String correo, @RequestParam String clave){
+        GetUsuario  getUsuario = authService.login(correo, clave);
+        return ResponseEntity.ok().body(getUsuario);
     }
 }

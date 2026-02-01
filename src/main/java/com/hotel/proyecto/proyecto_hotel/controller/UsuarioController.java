@@ -8,6 +8,8 @@ import com.hotel.proyecto.proyecto_hotel.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,15 +23,9 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping
-    public Object save(@RequestBody UsuarioSave usuarioSave) {
-        try{
-            return usuarioService.save(usuarioSave);
-        }catch(UsuarioRegistrarCorreoExistenteExcepcion x){
-            log.error("Error al insertar el usuario "+x.getMessage());
-
-            return "\"error\":\""+x.getMessage()+"\"";
-        }
-
+    public ResponseEntity<GetUsuario> save(@RequestBody UsuarioSave usuarioSave) {
+        GetUsuario usuario = usuarioService.save(usuarioSave);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     @GetMapping
